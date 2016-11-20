@@ -7,7 +7,6 @@ public class Aircraft {
     private long id;
     private String name;
     private String desc;
-    private List<Place> placeList;
     private Company company;
 
     public long getId() {
@@ -34,14 +33,6 @@ public class Aircraft {
         this.desc = desc;
     }
 
-    public List<Place> getPlaceList() {
-        return placeList;
-    }
-
-    public void setPlaceList(List<Place> placeList) {
-        this.placeList = placeList;
-    }
-
     public Company getCompany() {
         return company;
     }
@@ -60,7 +51,6 @@ public class Aircraft {
         if (id != aircraft.id) return false;
         if (name != null ? !name.equals(aircraft.name) : aircraft.name != null) return false;
         if (desc != null ? !desc.equals(aircraft.desc) : aircraft.desc != null) return false;
-        if (placeList != null ? !placeList.equals(aircraft.placeList) : aircraft.placeList != null) return false;
         return !(company != null ? !company.equals(aircraft.company) : aircraft.company != null);
 
     }
@@ -70,7 +60,6 @@ public class Aircraft {
         int result = (int) (id ^ (id >>> 32));
         result = 31 * result + (name != null ? name.hashCode() : 0);
         result = 31 * result + (desc != null ? desc.hashCode() : 0);
-        result = 31 * result + (placeList != null ? placeList.hashCode() : 0);
         result = 31 * result + (company != null ? company.hashCode() : 0);
         return result;
     }
@@ -81,7 +70,6 @@ public class Aircraft {
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", desc='" + desc + '\'' +
-                ", placeList=" + placeList +
                 ", company=" + company +
                 '}';
     }

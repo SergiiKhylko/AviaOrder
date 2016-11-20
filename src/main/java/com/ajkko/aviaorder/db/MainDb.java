@@ -13,11 +13,9 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Properties;
 
-
 public class MainDb {
 
     private static final Logger LOG = LogManager.getLogger(MainDb.class);
-
 
     private Connection connection;
     private static MainDb instance;
@@ -133,6 +131,4 @@ public class MainDb {
 
         return property;
     }
-
-
 }

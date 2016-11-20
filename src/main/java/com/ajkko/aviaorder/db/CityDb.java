@@ -22,7 +22,6 @@ public class CityDb {
     private static final String COLUMN_COUNTRY_ID = "country_id";
 
     private CityDb(){
-
     }
 
     public static CityDb getInstance(){
@@ -62,7 +61,7 @@ public class CityDb {
 
     public City getCity(long id){
         try {
-            return getCitie(MainDb.getInstance().getStatement());
+            return getCity(MainDb.getInstance().getStatement());
         } catch (SQLException e) {
             LOG.error(e.getMessage(), e);
         } finally {
@@ -71,7 +70,7 @@ public class CityDb {
         return null;
     }
 
-    private City getCitie(Statement statement) {
+    private City getCity(Statement statement) {
         return null;
     }
 

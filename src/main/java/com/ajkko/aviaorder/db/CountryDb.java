@@ -4,7 +4,11 @@ import com.ajkko.aviaorder.objects.spr.Country;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -86,13 +90,23 @@ public class CountryDb {
             country.setName(resultSet.getString(COLUMN_NAME));
             country.setShortName(resultSet.getString(COLUMN_SHORT_NAME));
             country.setFlag(resultSet.getBytes(COLUMN_FLAG));
-        } catch (SQLException e) {
-            LOG.error(e.getMessage(), e);
         } finally {
-            if (resultSet!=null) resultSet.close();
-            if (statement!=null) statement.close();
+            closeResultSet(resultSet);
+            closeStatement(statement);
         }
 
        return country;
+    }
+
+    private void closeResultSet(ResultSet resultSet) throws SQLException {
+        if (resultSet!=null) {
+            resultSet.close();
+        }
+    }
+
+    private void closeStatement(Statement statement) throws SQLException {
+        if (statement!=null) {
+            statement.close();
+        }
     }
 }
