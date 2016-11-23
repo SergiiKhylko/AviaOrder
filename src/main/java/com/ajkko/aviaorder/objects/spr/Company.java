@@ -4,7 +4,7 @@ public class Company {
 
     private long id;
     private String name;
-    private String desk;
+    private String desc;
 
     public long getId() {
         return id;
@@ -22,12 +22,12 @@ public class Company {
         this.name = name;
     }
 
-    public String getDesk() {
-        return desk;
+    public String getDesc() {
+        return desc;
     }
 
-    public void setDesk(String desk) {
-        this.desk = desk;
+    public void setDesc(String desc) {
+        this.desc = desc;
     }
 
     @Override
@@ -39,7 +39,7 @@ public class Company {
 
         if (id != company.id) return false;
         if (name != null ? !name.equals(company.name) : company.name != null) return false;
-        return !(desk != null ? !desk.equals(company.desk) : company.desk != null);
+        return !(desc != null ? !desc.equals(company.desc) : company.desc != null);
 
     }
 
@@ -47,7 +47,7 @@ public class Company {
     public int hashCode() {
         int result = (int) (id ^ (id >>> 32));
         result = 31 * result + (name != null ? name.hashCode() : 0);
-        result = 31 * result + (desk != null ? desk.hashCode() : 0);
+        result = 31 * result + (desc != null ? desc.hashCode() : 0);
         return result;
     }
 
@@ -56,7 +56,7 @@ public class Company {
         return "Company{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
-                ", desk='" + desk + '\'' +
+                ", desc='" + desc + '\'' +
                 '}';
     }
 }

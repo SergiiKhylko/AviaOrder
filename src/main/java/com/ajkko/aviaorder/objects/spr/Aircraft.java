@@ -1,8 +1,5 @@
 package com.ajkko.aviaorder.objects.spr;
 
-
-import java.util.List;
-
 public class Aircraft {
     private long id;
     private String name;
