@@ -10,6 +10,9 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import static com.ajkko.aviaorder.utils.DbUtils.closeResultSet;
+import static com.ajkko.aviaorder.utils.DbUtils.closeStatement;
+
 public class AircraftDb {
 
     private static final Logger LOG = LogManager.getLogger(AircraftDb.class);
@@ -18,6 +21,7 @@ public class AircraftDb {
     private static final String COLUMN_ID = "id";
     private static final String COLUMN_NAME = "name";
     private static final String COLUMN_DESC = "desc";
+    private static final String COLUMN_COMPANY_ID = "company_id";
     private static AircraftDb instance;
 
     private AircraftDb(){
@@ -48,10 +52,7 @@ public class AircraftDb {
             resultSet = statement.executeQuery(SQL_GET_AIRCRAFTS);
             while(resultSet.next()){
                 Aircraft aircraft = new Aircraft();
-                aircraft.setId(resultSet.getLong(COLUMN_ID));
-                aircraft.setName(resultSet.getString(COLUMN_NAME));
-                aircraft.setCompany(null); //TODO
-                aircraft.setDesc(resultSet.getString(COLUMN_DESC));
+                fillAircraft(aircraft, resultSet);
                 aircrafts.add(aircraft);
             }
         } finally {
@@ -61,15 +62,12 @@ public class AircraftDb {
         return aircrafts;
     }
 
-    private void closeResultSet(ResultSet resultSet) throws SQLException {
-        if (resultSet!=null) {
-            resultSet.close();
-        }
+    private void fillAircraft(Aircraft aircraft, ResultSet resultSet) throws SQLException {
+        aircraft.setId(resultSet.getLong(COLUMN_ID));
+        aircraft.setName(resultSet.getString(COLUMN_NAME));
+        aircraft.setCompany(CompanyDb.getInstance().
+                getCompany(resultSet.getLong(COLUMN_COMPANY_ID)));
+        aircraft.setDesc(resultSet.getString(COLUMN_DESC));
     }
 
-    private void closeStatement(Statement statement) throws SQLException {
-        if (statement!=null) {
-            statement.close();
-        }
-    }
 }

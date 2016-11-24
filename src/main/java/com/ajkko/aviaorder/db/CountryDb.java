@@ -12,6 +12,9 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import static com.ajkko.aviaorder.utils.DbUtils.closeResultSet;
+import static com.ajkko.aviaorder.utils.DbUtils.closeStatement;
+
 public class CountryDb {
 
     private static CountryDb instance;
@@ -47,17 +50,14 @@ public class CountryDb {
     private Collection<Country>getCountries(Statement statement) throws SQLException {
         ResultSet resultSet = statement.executeQuery(SQL_GET_COUNTRIES);
         Collection<Country> countries = new ArrayList<>();
-
         while(resultSet.next()){
             Country country = new Country();
             country.setId(resultSet.getLong(COLUMN_ID));
             country.setName(resultSet.getString(COLUMN_NAME));
             country.setShortName(resultSet.getString(COLUMN_SHORT_NAME));
             country.setFlag(resultSet.getBytes(COLUMN_FLAG));
-
             countries.add(country);
         }
-
         return countries;
     }
 
@@ -85,7 +85,6 @@ public class CountryDb {
         try {
             resultSet = statement.executeQuery();
             resultSet.next();
-
             country.setId(resultSet.getLong(COLUMN_ID));
             country.setName(resultSet.getString(COLUMN_NAME));
             country.setShortName(resultSet.getString(COLUMN_SHORT_NAME));
@@ -96,17 +95,5 @@ public class CountryDb {
         }
 
        return country;
-    }
-
-    private void closeResultSet(ResultSet resultSet) throws SQLException {
-        if (resultSet!=null) {
-            resultSet.close();
-        }
-    }
-
-    private void closeStatement(Statement statement) throws SQLException {
-        if (statement!=null) {
-            statement.close();
-        }
     }
 }

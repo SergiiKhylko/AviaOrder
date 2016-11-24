@@ -40,7 +40,7 @@ public class MainDb {
     public Connection getConnection(){
         if (connection == null || isConnectionClosed()){
             connection = getConnectionFromDataSource();
-            LOG.info("Connection is created");
+            LOG.debug("Connection is created");
         }
         return connection;
     }
@@ -66,9 +66,9 @@ public class MainDb {
         Properties properties = getDbProperties();
 
         try {
-            LOG.info("Connecting to DataBase");
+            LOG.debug("Connecting to DataBase");
             Class.forName(properties.getProperty(JDBC_DRIVER_PROPERTY));
-            LOG.info("MySQL JDBC Driver Registered!");
+            LOG.debug("MySQL JDBC Driver Registered!");
             return DriverManager.getConnection(
                     properties.getProperty(DB_PROPERTY_HOST),
                     properties.getProperty(DB_PROPERTY_LOGIN),
@@ -84,6 +84,7 @@ public class MainDb {
 
     private Connection getConnectionFromDataSource(){
         try {
+            LOG.debug("Connecting to DataBase");
             return getDataSource().getConnection();
         } catch (SQLException e) {
             LOG.error("Connection Failed! Check output console", e);

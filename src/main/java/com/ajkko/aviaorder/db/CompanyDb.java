@@ -8,6 +8,9 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import static com.ajkko.aviaorder.utils.DbUtils.closeResultSet;
+import static com.ajkko.aviaorder.utils.DbUtils.closeStatement;
+
 public class CompanyDb {
 
     private static final Logger LOG = LogManager.getLogger(CompanyDb.class);
@@ -71,7 +74,6 @@ public class CompanyDb {
         return statement;
     }
 
-
     private Company getCompany(PreparedStatement statement) throws SQLException {
         Company company = new Company();
         ResultSet resultSet = null;
@@ -79,25 +81,12 @@ public class CompanyDb {
             resultSet = statement.executeQuery();
             resultSet.next();
             company.setId(resultSet.getLong(COLUMN_ID));
-            company.setName(COLUMN_NAME);
-            company.setDesc(COLUMN_DESC);
-        } catch (SQLException e) {
+            company.setName(resultSet.getString(COLUMN_NAME));
+            company.setDesc(resultSet.getString(COLUMN_DESC));
+        } finally {
             closeResultSet(resultSet);
             closeStatement(statement);
         }
         return company;
     }
-
-    private void closeResultSet(ResultSet resultSet) throws SQLException {
-        if (resultSet!=null) {
-            resultSet.close();
-        }
-    }
-
-    private void closeStatement(Statement statement) throws SQLException {
-        if (statement!=null) {
-            statement.close();
-        }
-    }
-
 }
