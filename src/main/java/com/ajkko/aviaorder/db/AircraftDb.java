@@ -1,9 +1,11 @@
 package com.ajkko.aviaorder.db;
 
 import com.ajkko.aviaorder.objects.spr.Aircraft;
+import com.ajkko.aviaorder.utils.DbUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -18,6 +20,7 @@ public class AircraftDb {
     private static final Logger LOG = LogManager.getLogger(AircraftDb.class);
 
     private static final String SQL_GET_AIRCRAFTS = "select * from spr_aircraft";
+    private static final String SQL_GET_AIRCRAFT = "select * from spr_aircraft where id = ?";
     private static final String COLUMN_ID = "id";
     private static final String COLUMN_NAME = "name";
     private static final String COLUMN_DESC = "desc";
@@ -51,9 +54,7 @@ public class AircraftDb {
         try {
             resultSet = statement.executeQuery(SQL_GET_AIRCRAFTS);
             while(resultSet.next()){
-                Aircraft aircraft = new Aircraft();
-                fillAircraft(aircraft, resultSet);
-                aircrafts.add(aircraft);
+                aircrafts.add(getMappedAircraft(resultSet));
             }
         } finally {
             closeResultSet(resultSet);
@@ -62,12 +63,41 @@ public class AircraftDb {
         return aircrafts;
     }
 
-    private void fillAircraft(Aircraft aircraft, ResultSet resultSet) throws SQLException {
+    public Aircraft getAircraft(long id){
+        try {
+            return get(id);
+        } catch (SQLException e) {
+            LOG.error(e.getMessage(), e);
+        } finally {
+            MainDb.getInstance().closeConnection();
+        }
+        return null;
+    }
+
+    protected Aircraft get(long id) throws SQLException {
+        return getAircraft(DbUtils.getByIdStatement(SQL_GET_AIRCRAFT, id));
+    }
+
+    private Aircraft getAircraft(PreparedStatement statement) throws SQLException {
+        ResultSet resultSet = null;
+        try {
+            resultSet = statement.executeQuery();
+            resultSet.next();
+            return getMappedAircraft(resultSet);
+        } finally {
+            closeStatement(statement);
+            closeResultSet(resultSet);
+        }
+    }
+
+    private Aircraft getMappedAircraft(ResultSet resultSet) throws SQLException {
+        Aircraft aircraft = new Aircraft();
         aircraft.setId(resultSet.getLong(COLUMN_ID));
         aircraft.setName(resultSet.getString(COLUMN_NAME));
         aircraft.setCompany(CompanyDb.getInstance().
-                getCompany(resultSet.getLong(COLUMN_COMPANY_ID)));
+                get(resultSet.getLong(COLUMN_COMPANY_ID)));
         aircraft.setDesc(resultSet.getString(COLUMN_DESC));
+        return aircraft;
     }
 
 }

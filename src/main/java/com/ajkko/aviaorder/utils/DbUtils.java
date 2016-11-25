@@ -10,13 +10,13 @@ import java.sql.Statement;
 
 public class DbUtils {
     public static void closeResultSet(ResultSet resultSet) throws SQLException {
-        if (resultSet!=null) {
+        if (resultSet != null) {
             resultSet.close();
         }
     }
 
     public static void closeStatement(Statement statement) throws SQLException {
-        if (statement!=null) {
+        if (statement != null) {
             statement.close();
         }
     }

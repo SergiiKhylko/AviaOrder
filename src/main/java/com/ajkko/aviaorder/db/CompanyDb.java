@@ -1,10 +1,14 @@
 package com.ajkko.aviaorder.db;
 
 import com.ajkko.aviaorder.objects.spr.Company;
+import com.ajkko.aviaorder.utils.DbUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.sql.*;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -47,46 +51,43 @@ public class CompanyDb {
         ResultSet resultSet =  statement.executeQuery(SQL_GET_COMPANIES);
         Collection<Company> companies = new ArrayList<>();
         while(resultSet.next()){
-            Company company = new Company();
-            company.setId(resultSet.getLong(COLUMN_ID));
-            company.setName(resultSet.getString(COLUMN_NAME));
-            company.setDesc(resultSet.getString(COLUMN_DESC));
-            companies.add(company);
+            companies.add(getMappedCompany(resultSet));
         }
         return companies;
     }
 
     public Company getCompany(long id){
         try {
-            return getCompany(getCompanyStatement(id));
+            return get(id);
         } catch (SQLException e) {
             LOG.error(e.getMessage(), e);
         } finally {
-            //MainDb.getInstance().closeConnection(); //todo
+            MainDb.getInstance().closeConnection();
         }
         return null;
     }
 
-    private PreparedStatement getCompanyStatement(long id) throws SQLException {
-        Connection connection = MainDb.getInstance().getConnection();
-        PreparedStatement statement = connection.prepareStatement(SQL_GET_COMPANY);
-        statement.setLong(1, id);
-        return statement;
+    protected Company get(long id) throws SQLException {
+        return getCompany(DbUtils.getByIdStatement(SQL_GET_COMPANY, id));
     }
 
     private Company getCompany(PreparedStatement statement) throws SQLException {
-        Company company = new Company();
         ResultSet resultSet = null;
         try {
             resultSet = statement.executeQuery();
             resultSet.next();
-            company.setId(resultSet.getLong(COLUMN_ID));
-            company.setName(resultSet.getString(COLUMN_NAME));
-            company.setDesc(resultSet.getString(COLUMN_DESC));
+            return getMappedCompany(resultSet);
         } finally {
             closeResultSet(resultSet);
             closeStatement(statement);
         }
+    }
+
+    private Company getMappedCompany(ResultSet resultSet) throws SQLException {
+        Company company = new Company();
+        company.setId(resultSet.getLong(COLUMN_ID));
+        company.setName(resultSet.getString(COLUMN_NAME));
+        company.setDesc(resultSet.getString(COLUMN_DESC));
         return company;
     }
 }

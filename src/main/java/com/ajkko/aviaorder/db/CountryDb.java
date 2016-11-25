@@ -1,10 +1,10 @@
 package com.ajkko.aviaorder.db;
 
 import com.ajkko.aviaorder.objects.spr.Country;
+import com.ajkko.aviaorder.utils.DbUtils;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -48,52 +48,53 @@ public class CountryDb {
     }
 
     private Collection<Country>getCountries(Statement statement) throws SQLException {
-        ResultSet resultSet = statement.executeQuery(SQL_GET_COUNTRIES);
+        ResultSet resultSet = null;
         Collection<Country> countries = new ArrayList<>();
-        while(resultSet.next()){
-            Country country = new Country();
-            country.setId(resultSet.getLong(COLUMN_ID));
-            country.setName(resultSet.getString(COLUMN_NAME));
-            country.setShortName(resultSet.getString(COLUMN_SHORT_NAME));
-            country.setFlag(resultSet.getBytes(COLUMN_FLAG));
-            countries.add(country);
+        try {
+            resultSet = statement.executeQuery(SQL_GET_COUNTRIES);
+            while (resultSet.next()) {
+                countries.add(getMappedCountry(resultSet));
+            }
+        } finally {
+            closeResultSet(resultSet);
+            closeStatement(statement);
         }
         return countries;
     }
 
     public Country getCountry(long id) {
         try {
-            return getCountry(getCountryStatement(id));
+            return get(id);
         } catch (SQLException e) {
             LOG.error(e.getMessage(), e);
         } finally {
-           // MainDb.getInstance().closeConnection();
+            MainDb.getInstance().closeConnection();
         }
         return null;
     }
 
-    private PreparedStatement getCountryStatement(long id) throws SQLException {
-        Connection connection = MainDb.getInstance().getConnection();
-        PreparedStatement statement = connection.prepareStatement(SQL_GET_COUNTRY_BY_ID);
-        statement.setLong(1, id);
-        return statement;
+    protected Country get(long id) throws SQLException {
+        return getCountry(DbUtils.getByIdStatement(SQL_GET_COUNTRY_BY_ID, id));
     }
 
     private Country getCountry(PreparedStatement statement) throws SQLException {
-        Country country = new Country();
         ResultSet resultSet = null;
         try {
             resultSet = statement.executeQuery();
             resultSet.next();
-            country.setId(resultSet.getLong(COLUMN_ID));
-            country.setName(resultSet.getString(COLUMN_NAME));
-            country.setShortName(resultSet.getString(COLUMN_SHORT_NAME));
-            country.setFlag(resultSet.getBytes(COLUMN_FLAG));
+            return getMappedCountry(resultSet);
         } finally {
             closeResultSet(resultSet);
             closeStatement(statement);
         }
+    }
 
-       return country;
+    private Country getMappedCountry(ResultSet resultSet) throws SQLException {
+        Country country = new Country();
+        country.setId(resultSet.getLong(COLUMN_ID));
+        country.setName(resultSet.getString(COLUMN_NAME));
+        country.setShortName(resultSet.getString(COLUMN_SHORT_NAME));
+        country.setFlag(resultSet.getBytes(COLUMN_FLAG));
+        return country;
     }
 }

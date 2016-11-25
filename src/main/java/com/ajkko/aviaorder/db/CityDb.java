@@ -50,13 +50,12 @@ public class CityDb {
     }
 
     private Collection<City> getCities(Statement statement) throws SQLException {
-        ResultSet resultSet = statement.executeQuery(SQL_GET_CITIES);
+        ResultSet resultSet = null;
         Collection<City> cities = new ArrayList<>();
         try {
+            resultSet = statement.executeQuery(SQL_GET_CITIES);
             while (resultSet.next()) {
-                City city = new City();
-                fillCity(city, resultSet);
-                cities.add(city);
+                cities.add(getMappedCity(resultSet));
             }
         } finally {
             closeResultSet(resultSet);
@@ -67,7 +66,7 @@ public class CityDb {
 
     public City getCity(long id){
         try {
-            return getCity(getByIdStatement(SQL_GET_CITY, id));
+            return get(id);
         } catch (SQLException e) {
             LOG.error(e.getMessage(), e);
         } finally {
@@ -76,27 +75,30 @@ public class CityDb {
         return null;
     }
 
+    protected City get(long id) throws SQLException {
+        return getCity(getByIdStatement(SQL_GET_CITY, id));
+    }
+
     private City getCity(PreparedStatement statement) throws SQLException {
-        City city = new City();
         ResultSet resultSet = null;
         try {
             resultSet = statement.executeQuery();
             resultSet.next();
-            fillCity(city, resultSet);
+            return getMappedCity(resultSet);
         } finally {
             closeResultSet(resultSet);
             closeStatement(statement);
         }
-        return null;
     }
 
-    private void fillCity(City city, ResultSet resultSet) throws SQLException {
+    private City getMappedCity(ResultSet resultSet) throws SQLException {
+        City city = new City();
         city.setId(resultSet.getLong(COLUMN_ID));
         city.setName(resultSet.getString(COLUMN_NAME));
         city.setCode(resultSet.getString(COLUMN_CODE));
         city.setDesc(resultSet.getString(COLUMN_DESC));
         city.setCountry(CountryDb.getInstance().
-                getCountry(resultSet.getLong(COLUMN_COUNTRY_ID)));
+                get(resultSet.getLong(COLUMN_COUNTRY_ID)));
+        return city;
     }
-
 }
