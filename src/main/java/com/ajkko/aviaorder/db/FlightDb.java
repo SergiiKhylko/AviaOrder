@@ -1,7 +1,6 @@
 package com.ajkko.aviaorder.db;
 
 import com.ajkko.aviaorder.objects.Flight;
-import com.ajkko.aviaorder.objects.spr.City;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -9,8 +8,10 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.sql.SQLException;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collection;
 
 import static com.ajkko.aviaorder.utils.DbUtils.closeResultSet;
@@ -70,18 +71,21 @@ public class FlightDb {
         Flight flight = new Flight();
         flight.setId(resultSet.getLong(COLUMN_ID));
         flight.setCode(resultSet.getString(COLUMN_CODE));
-        flight.setDateCome(getDate(resultSet.getLong(COLUMN_DATE_COME)));
-        flight.setDateDepart(getDate(resultSet.getLong(COLUMN_DEPART)));
-        flight.setAircraft(AircraftDb.getInstance().get(resultSet.getLong(COLUMN_AIRCRAFT_ID)));
-        flight.setCityFrom(CityDb.getInstance().get(resultSet.getLong(COLUMN_CITY_FROM_ID)));
+        flight.setCityFrom(CityDb.getInstance().
+                get(resultSet.getLong(COLUMN_CITY_FROM_ID)));
         flight.setCityTo(CityDb.getInstance().get(resultSet.getLong(COLUMN_CITY_TO_ID)));
+        flight.setDateDepart(getDateTime(resultSet.getLong(COLUMN_DEPART),
+                flight.getCityFrom().getTimeZone()));
+        flight.setDateCome(getDateTime(resultSet.getLong(COLUMN_DATE_COME),
+                flight.getCityTo().getTimeZone()));
+        flight.setAircraft(AircraftDb.getInstance().
+                get(resultSet.getLong(COLUMN_AIRCRAFT_ID)));
         return flight;
     }
 
-    private Calendar getDate(long date){
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(date);
-        return calendar;
+    private LocalDateTime getDateTime(long timestamp, ZoneId timeZone){
+        Instant instant = Instant.ofEpochMilli(timestamp);
+        return LocalDateTime.ofInstant(instant, timeZone);
     }
 
     public Flight getFlight(long id){

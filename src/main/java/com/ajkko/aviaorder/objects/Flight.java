@@ -3,13 +3,13 @@ package com.ajkko.aviaorder.objects;
 import com.ajkko.aviaorder.objects.spr.Aircraft;
 import com.ajkko.aviaorder.objects.spr.City;
 
-import java.util.Calendar;
+import java.time.LocalDateTime;
 
 public class Flight {
     private long id;
     private String code;
-    private Calendar dateDepart;
-    private Calendar dateCome;
+    private LocalDateTime dateDepart;
+    private LocalDateTime dateCome;
     private Aircraft aircraft;
     private City cityFrom;
     private City cityTo;
@@ -54,19 +54,19 @@ public class Flight {
         this.cityTo = cityTo;
     }
 
-    public Calendar getDateDepart() {
+    public LocalDateTime getDateDepart() {
         return dateDepart;
     }
 
-    public void setDateDepart(Calendar dateDepart) {
+    public void setDateDepart(LocalDateTime dateDepart) {
         this.dateDepart = dateDepart;
     }
 
-    public Calendar getDateCome() {
+    public LocalDateTime getDateCome() {
         return dateCome;
     }
 
-    public void setDateCome(Calendar dateCome) {
+    public void setDateCome(LocalDateTime dateCome) {
         this.dateCome = dateCome;
     }
 

@@ -1,5 +1,7 @@
 package com.ajkko.aviaorder.objects.spr;
 
+import java.time.ZoneId;
+
 public class City {
 
     private long id;
@@ -7,6 +9,7 @@ public class City {
     private String desc;
     private Country country;
     private String code;
+    private ZoneId timeZone;
 
     public long getId() {
         return id;
@@ -48,6 +51,14 @@ public class City {
         this.code = code;
     }
 
+    public ZoneId getTimeZone() {
+        return timeZone;
+    }
+
+    public void setTimeZone(ZoneId timeZone) {
+        this.timeZone = timeZone;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -59,7 +70,8 @@ public class City {
         if (name != null ? !name.equals(city.name) : city.name != null) return false;
         if (desc != null ? !desc.equals(city.desc) : city.desc != null) return false;
         if (country != null ? !country.equals(city.country) : city.country != null) return false;
-        return !(code != null ? !code.equals(city.code) : city.code != null);
+        if (code != null ? !code.equals(city.code) : city.code != null) return false;
+        return !(timeZone != null ? !timeZone.equals(city.timeZone) : city.timeZone != null);
 
     }
 
@@ -70,6 +82,7 @@ public class City {
         result = 31 * result + (desc != null ? desc.hashCode() : 0);
         result = 31 * result + (country != null ? country.hashCode() : 0);
         result = 31 * result + (code != null ? code.hashCode() : 0);
+        result = 31 * result + (timeZone != null ? timeZone.hashCode() : 0);
         return result;
     }
 
@@ -81,6 +94,7 @@ public class City {
                 ", desc='" + desc + '\'' +
                 ", country=" + country +
                 ", code='" + code + '\'' +
+                ", timeZone=" + timeZone +
                 '}';
     }
 }
