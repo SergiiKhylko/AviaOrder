@@ -1,6 +1,6 @@
 package com.ajkko.aviaorder.db;
 
-import com.ajkko.aviaorder.objects.spr.Company;
+import com.ajkko.aviaorder.objects.Company;
 import com.ajkko.aviaorder.utils.DbUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

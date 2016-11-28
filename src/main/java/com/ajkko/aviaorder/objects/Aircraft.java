@@ -1,10 +1,10 @@
-package com.ajkko.aviaorder.objects.spr;
+package com.ajkko.aviaorder.objects;
 
-public class Company {
-
+public class Aircraft {
     private long id;
     private String name;
     private String desc;
+    private Company company;
 
     public long getId() {
         return id;
@@ -30,16 +30,25 @@ public class Company {
         this.desc = desc;
     }
 
+    public Company getCompany() {
+        return company;
+    }
+
+    public void setCompany(Company company) {
+        this.company = company;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        Company company = (Company) o;
+        Aircraft aircraft = (Aircraft) o;
 
-        if (id != company.id) return false;
-        if (name != null ? !name.equals(company.name) : company.name != null) return false;
-        return !(desc != null ? !desc.equals(company.desc) : company.desc != null);
+        if (id != aircraft.id) return false;
+        if (name != null ? !name.equals(aircraft.name) : aircraft.name != null) return false;
+        if (desc != null ? !desc.equals(aircraft.desc) : aircraft.desc != null) return false;
+        return !(company != null ? !company.equals(aircraft.company) : aircraft.company != null);
 
     }
 
@@ -48,15 +57,17 @@ public class Company {
         int result = (int) (id ^ (id >>> 32));
         result = 31 * result + (name != null ? name.hashCode() : 0);
         result = 31 * result + (desc != null ? desc.hashCode() : 0);
+        result = 31 * result + (company != null ? company.hashCode() : 0);
         return result;
     }
 
     @Override
     public String toString() {
-        return "Company{" +
+        return "Aircraft{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", desc='" + desc + '\'' +
+                ", company=" + company +
                 '}';
     }
 }

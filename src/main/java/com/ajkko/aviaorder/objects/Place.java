@@ -1,4 +1,4 @@
-package com.ajkko.aviaorder.objects.spr;
+package com.ajkko.aviaorder.objects;
 
 public class Place {
     private long id;

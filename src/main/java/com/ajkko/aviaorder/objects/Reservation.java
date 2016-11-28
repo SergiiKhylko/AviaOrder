@@ -1,6 +1,6 @@
 package com.ajkko.aviaorder.objects;
 
-import com.ajkko.aviaorder.objects.spr.Place;
+import com.ajkko.aviaorder.objects.Place;
 import java.util.Calendar;
 
 public class Reservation {

@@ -1,7 +1,7 @@
 package com.ajkko.aviaorder.objects;
 
-import com.ajkko.aviaorder.objects.spr.Aircraft;
-import com.ajkko.aviaorder.objects.spr.City;
+import com.ajkko.aviaorder.objects.Aircraft;
+import com.ajkko.aviaorder.objects.City;
 
 import java.time.Duration;
 import java.time.ZonedDateTime;

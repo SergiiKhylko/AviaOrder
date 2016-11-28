@@ -1,6 +1,7 @@
-package com.ajkko.aviaorder.objects.spr;
+package com.ajkko.aviaorder.objects;
 
-public class FlightClass {
+public class Company {
+
     private long id;
     private String name;
     private String desc;
@@ -34,11 +35,12 @@ public class FlightClass {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        FlightClass that = (FlightClass) o;
+        Company company = (Company) o;
 
-        if (id != that.id) return false;
-        if (name != null ? !name.equals(that.name) : that.name != null) return false;
-        return !(desc != null ? !desc.equals(that.desc) : that.desc != null);
+        if (id != company.id) return false;
+        if (name != null ? !name.equals(company.name) : company.name != null) return false;
+        return !(desc != null ? !desc.equals(company.desc) : company.desc != null);
+
     }
 
     @Override
@@ -51,7 +53,7 @@ public class FlightClass {
 
     @Override
     public String toString() {
-        return "FlightClass{" +
+        return "Company{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", desc='" + desc + '\'' +

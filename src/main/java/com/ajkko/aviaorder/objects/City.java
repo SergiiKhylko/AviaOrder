@@ -1,4 +1,4 @@
-package com.ajkko.aviaorder.objects.spr;
+package com.ajkko.aviaorder.objects;
 
 import java.time.ZoneId;
 
