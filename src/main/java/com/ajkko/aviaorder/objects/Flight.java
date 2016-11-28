@@ -3,16 +3,21 @@ package com.ajkko.aviaorder.objects;
 import com.ajkko.aviaorder.objects.spr.Aircraft;
 import com.ajkko.aviaorder.objects.spr.City;
 
-import java.time.LocalDateTime;
+import java.time.Duration;
+import java.time.ZonedDateTime;
 
 public class Flight {
     private long id;
     private String code;
-    private LocalDateTime dateDepart;
-    private LocalDateTime dateCome;
+    private ZonedDateTime dateDepart;
+    private ZonedDateTime dateCome;
     private Aircraft aircraft;
     private City cityFrom;
     private City cityTo;
+
+    public Duration getFlightDuration(){
+        return Duration.between(dateDepart, dateCome);
+    }
 
     public long getId() {
         return id;
@@ -54,19 +59,19 @@ public class Flight {
         this.cityTo = cityTo;
     }
 
-    public LocalDateTime getDateDepart() {
+    public ZonedDateTime getDateDepart() {
         return dateDepart;
     }
 
-    public void setDateDepart(LocalDateTime dateDepart) {
+    public void setDateDepart(ZonedDateTime dateDepart) {
         this.dateDepart = dateDepart;
     }
 
-    public LocalDateTime getDateCome() {
+    public ZonedDateTime getDateCome() {
         return dateCome;
     }
 
-    public void setDateCome(LocalDateTime dateCome) {
+    public void setDateCome(ZonedDateTime dateCome) {
         this.dateCome = dateCome;
     }
 

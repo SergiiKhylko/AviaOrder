@@ -9,8 +9,8 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 import java.sql.SQLException;
 import java.time.Instant;
-import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -83,9 +83,9 @@ public class FlightDb {
         return flight;
     }
 
-    private LocalDateTime getDateTime(long timestamp, ZoneId timeZone){
+    private ZonedDateTime getDateTime(long timestamp, ZoneId timeZone){
         Instant instant = Instant.ofEpochMilli(timestamp);
-        return LocalDateTime.ofInstant(instant, timeZone);
+        return ZonedDateTime.ofInstant(instant, timeZone);
     }
 
     public Flight getFlight(long id){
