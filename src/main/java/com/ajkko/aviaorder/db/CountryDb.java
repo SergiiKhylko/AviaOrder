@@ -19,8 +19,8 @@ public class CountryDb {
 
     private static CountryDb instance;
     private static final Logger LOG = LogManager.getLogger(CountryDb.class);
-    private static final String SQL_GET_COUNTRIES = "select * from FlightDB.spr_country";
-    private static final String SQL_GET_COUNTRY_BY_ID = "select * from FlightDB.spr_country where id = ?";
+    private static final String SQL_GET_COUNTRIES = "select * from FlightDB.country";
+    private static final String SQL_GET_COUNTRY_BY_ID = "select * from FlightDB.country where id = ?";
     private static final String COLUMN_ID = "id";
     private static final String COLUMN_NAME = "name";
     private static final String COLUMN_SHORT_NAME = "short_name";

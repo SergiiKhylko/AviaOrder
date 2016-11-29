@@ -19,8 +19,8 @@ public class AircraftDb {
 
     private static final Logger LOG = LogManager.getLogger(AircraftDb.class);
 
-    private static final String SQL_GET_AIRCRAFTS = "select * from spr_aircraft";
-    private static final String SQL_GET_AIRCRAFT = "select * from spr_aircraft where id = ?";
+    private static final String SQL_GET_AIRCRAFTS = "select * from aircraft";
+    private static final String SQL_GET_AIRCRAFT = "select * from aircraft where id = ?";
     private static final String COLUMN_ID = "id";
     private static final String COLUMN_NAME = "name";
     private static final String COLUMN_DESC = "desc";

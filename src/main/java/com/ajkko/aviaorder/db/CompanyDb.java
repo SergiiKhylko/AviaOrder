@@ -20,8 +20,8 @@ public class CompanyDb {
     private static final Logger LOG = LogManager.getLogger(CompanyDb.class);
 
     private static CompanyDb instance;
-    private static final String SQL_GET_COMPANIES = "select * from FlightDB.spr_company";
-    private static final String SQL_GET_COMPANY = "select * from FlightDB.spr_company where id = ?";
+    private static final String SQL_GET_COMPANIES = "select * from FlightDB.company";
+    private static final String SQL_GET_COMPANY = "select * from FlightDB.company where id = ?";
     private static final String COLUMN_ID = "id";
     private static final String COLUMN_NAME = "name";
     private static final String COLUMN_DESC = "desc";
