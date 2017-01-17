@@ -1,5 +1,10 @@
 package com.ajkko.aviaorder.objects;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+
 public class Aircraft {
     private long id;
     private String name;
@@ -43,31 +48,33 @@ public class Aircraft {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        Aircraft aircraft = (Aircraft) o;
+        Aircraft that = (Aircraft) o;
 
-        if (id != aircraft.id) return false;
-        if (name != null ? !name.equals(aircraft.name) : aircraft.name != null) return false;
-        if (desc != null ? !desc.equals(aircraft.desc) : aircraft.desc != null) return false;
-        return !(company != null ? !company.equals(aircraft.company) : aircraft.company != null);
-
+        return new EqualsBuilder()
+                .append(id, that.id)
+                .append(name, that.name)
+                .append(desc, that.desc)
+                .append(company, that.company)
+                .isEquals();
     }
 
     @Override
     public int hashCode() {
-        int result = (int) (id ^ (id >>> 32));
-        result = 31 * result + (name != null ? name.hashCode() : 0);
-        result = 31 * result + (desc != null ? desc.hashCode() : 0);
-        result = 31 * result + (company != null ? company.hashCode() : 0);
-        return result;
+        return new HashCodeBuilder()
+                .append(id)
+                .append(name)
+                .append(desc)
+                .append(company)
+                .toHashCode();
     }
 
     @Override
     public String toString() {
-        return "Aircraft{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", desc='" + desc + '\'' +
-                ", company=" + company +
-                '}';
+        return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
+                .append("id", id)
+                .append("name", name)
+                .append("desc", desc)
+                .append("company", company)
+                .toString();
     }
 }

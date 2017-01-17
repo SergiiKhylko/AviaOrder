@@ -1,5 +1,9 @@
 package com.ajkko.aviaorder.objects;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 import java.time.ZoneId;
 
 public class City {
@@ -63,38 +67,38 @@ public class City {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-
         City city = (City) o;
-
-        if (id != city.id) return false;
-        if (name != null ? !name.equals(city.name) : city.name != null) return false;
-        if (desc != null ? !desc.equals(city.desc) : city.desc != null) return false;
-        if (country != null ? !country.equals(city.country) : city.country != null) return false;
-        if (code != null ? !code.equals(city.code) : city.code != null) return false;
-        return !(timeZone != null ? !timeZone.equals(city.timeZone) : city.timeZone != null);
-
+        return new EqualsBuilder()
+                .append(id, city.id)
+                .append(name, city.name)
+                .append(desc, city.desc)
+                .append(country, city.country)
+                .append(code, city.code)
+                .append(timeZone, city.timeZone)
+                .isEquals();
     }
 
     @Override
     public int hashCode() {
-        int result = (int) (id ^ (id >>> 32));
-        result = 31 * result + (name != null ? name.hashCode() : 0);
-        result = 31 * result + (desc != null ? desc.hashCode() : 0);
-        result = 31 * result + (country != null ? country.hashCode() : 0);
-        result = 31 * result + (code != null ? code.hashCode() : 0);
-        result = 31 * result + (timeZone != null ? timeZone.hashCode() : 0);
-        return result;
+        return new HashCodeBuilder(17, 37)
+                .append(id)
+                .append(name)
+                .append(desc)
+                .append(country)
+                .append(code)
+                .append(timeZone)
+                .toHashCode();
     }
 
     @Override
     public String toString() {
-        return "City{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", desc='" + desc + '\'' +
-                ", country=" + country +
-                ", code='" + code + '\'' +
-                ", timeZone=" + timeZone +
-                '}';
+        return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
+                .append("id", id)
+                .append("name", name)
+                .append("desc", desc)
+                .append("country", country)
+                .append("code", code)
+                .append("timeZone", timeZone)
+                .toString();
     }
 }
