@@ -1,5 +1,10 @@
 package com.ajkko.aviaorder.objects;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+
 public class Company {
 
     private long id;
@@ -33,30 +38,33 @@ public class Company {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
+
         if (o == null || getClass() != o.getClass()) return false;
 
         Company company = (Company) o;
 
-        if (id != company.id) return false;
-        if (name != null ? !name.equals(company.name) : company.name != null) return false;
-        return !(desc != null ? !desc.equals(company.desc) : company.desc != null);
-
+        return new EqualsBuilder()
+                .append(id, company.id)
+                .append(name, company.name)
+                .append(desc, company.desc)
+                .isEquals();
     }
 
     @Override
     public int hashCode() {
-        int result = (int) (id ^ (id >>> 32));
-        result = 31 * result + (name != null ? name.hashCode() : 0);
-        result = 31 * result + (desc != null ? desc.hashCode() : 0);
-        return result;
+        return new HashCodeBuilder(17, 37)
+                .append(id)
+                .append(name)
+                .append(desc)
+                .toHashCode();
     }
 
     @Override
     public String toString() {
-        return "Company{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", desc='" + desc + '\'' +
-                '}';
+        return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
+                .append("id", id)
+                .append("name", name)
+                .append("desc", desc)
+                .toString();
     }
 }

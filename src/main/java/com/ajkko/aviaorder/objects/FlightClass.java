@@ -1,5 +1,10 @@
 package com.ajkko.aviaorder.objects;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+
 public class FlightClass {
     private long id;
     private String name;
@@ -32,29 +37,33 @@ public class FlightClass {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
+
         if (o == null || getClass() != o.getClass()) return false;
 
         FlightClass that = (FlightClass) o;
 
-        if (id != that.id) return false;
-        if (name != null ? !name.equals(that.name) : that.name != null) return false;
-        return !(desc != null ? !desc.equals(that.desc) : that.desc != null);
+        return new EqualsBuilder()
+                .append(id, that.id)
+                .append(name, that.name)
+                .append(desc, that.desc)
+                .isEquals();
     }
 
     @Override
     public int hashCode() {
-        int result = (int) (id ^ (id >>> 32));
-        result = 31 * result + (name != null ? name.hashCode() : 0);
-        result = 31 * result + (desc != null ? desc.hashCode() : 0);
-        return result;
+        return new HashCodeBuilder(17, 37)
+                .append(id)
+                .append(name)
+                .append(desc)
+                .toHashCode();
     }
 
     @Override
     public String toString() {
-        return "FlightClass{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", desc='" + desc + '\'' +
-                '}';
+        return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
+                .append("id", id)
+                .append("name", name)
+                .append("desc", desc)
+                .toString();
     }
 }

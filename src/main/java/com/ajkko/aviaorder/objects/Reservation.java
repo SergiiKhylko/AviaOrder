@@ -1,6 +1,10 @@
 package com.ajkko.aviaorder.objects;
 
-import com.ajkko.aviaorder.objects.Place;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+
 import java.util.Calendar;
 
 public class Reservation {
@@ -73,28 +77,41 @@ public class Reservation {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-
         Reservation that = (Reservation) o;
-
-        if (id != that.id) return false;
-        if (!passenger.equals(that.passenger)) return false;
-        if (!flight.equals(that.flight)) return false;
-        if (!place.equals(that.place)) return false;
-        if (!addInfo.equals(that.addInfo)) return false;
-        if (!reserveDateTime.equals(that.reserveDateTime)) return false;
-        return code.equals(that.code);
-
+        return new EqualsBuilder()
+                .append(id, that.id)
+                .append(passenger, that.passenger)
+                .append(flight, that.flight)
+                .append(place, that.place)
+                .append(addInfo, that.addInfo)
+                .append(reserveDateTime, that.reserveDateTime)
+                .append(code, that.code)
+                .isEquals();
     }
 
     @Override
     public int hashCode() {
-        int result = (int) (id ^ (id >>> 32));
-        result = 31 * result + passenger.hashCode();
-        result = 31 * result + flight.hashCode();
-        result = 31 * result + place.hashCode();
-        result = 31 * result + addInfo.hashCode();
-        result = 31 * result + reserveDateTime.hashCode();
-        result = 31 * result + code.hashCode();
-        return result;
+        return new HashCodeBuilder(17, 37)
+                .append(id)
+                .append(passenger)
+                .append(flight)
+                .append(place)
+                .append(addInfo)
+                .append(reserveDateTime)
+                .append(code)
+                .toHashCode();
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
+                .append("id", id)
+                .append("passenger", passenger)
+                .append("flight", flight)
+                .append("place", place)
+                .append("addInfo", addInfo)
+                .append("reserveDateTime", reserveDateTime)
+                .append("code", code)
+                .toString();
     }
 }

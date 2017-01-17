@@ -1,5 +1,10 @@
 package com.ajkko.aviaorder.objects;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+
 public class Place {
     private long id;
     private char row;
@@ -43,32 +48,32 @@ public class Place {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-
         Place place = (Place) o;
-
-        if (id != place.id) return false;
-        if (row != place.row) return false;
-        if (seat != place.seat) return false;
-        return !(flightClass != null ? !flightClass.equals(place.flightClass) : place.flightClass != null);
-
+        return new EqualsBuilder()
+                .append(id, place.id)
+                .append(row, place.row)
+                .append(seat, place.seat)
+                .append(flightClass, place.flightClass)
+                .isEquals();
     }
 
     @Override
     public int hashCode() {
-        int result = (int) (id ^ (id >>> 32));
-        result = 31 * result + (int) row;
-        result = 31 * result + seat;
-        result = 31 * result + (flightClass != null ? flightClass.hashCode() : 0);
-        return result;
+        return new HashCodeBuilder(17, 37)
+                .append(id)
+                .append(row)
+                .append(seat)
+                .append(flightClass)
+                .toHashCode();
     }
 
     @Override
     public String toString() {
-        return "Place{" +
-                "id=" + id +
-                ", row=" + row +
-                ", seat=" + seat +
-                ", flightClass=" + flightClass +
-                '}';
+        return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
+                .append("id", id)
+                .append("row", row)
+                .append("seat", seat)
+                .append("flightClass", flightClass)
+                .toString();
     }
 }

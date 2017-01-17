@@ -1,5 +1,10 @@
 package com.ajkko.aviaorder.objects;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+
 public class Country {
 
     private long id;
@@ -43,29 +48,31 @@ public class Country {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-
         Country country = (Country) o;
-
-        if (id != country.id) return false;
-        if (name != null ? !name.equals(country.name) : country.name != null) return false;
-        return !(shortName != null ? !shortName.equals(country.shortName) : country.shortName != null);
-
+        return new EqualsBuilder()
+                .append(id, country.id)
+                .append(name, country.name)
+                .append(shortName, country.shortName)
+                .append(flag, country.flag)
+                .isEquals();
     }
 
     @Override
     public int hashCode() {
-        int result = (int) (id ^ (id >>> 32));
-        result = 31 * result + (name != null ? name.hashCode() : 0);
-        result = 31 * result + (shortName != null ? shortName.hashCode() : 0);
-        return result;
+        return new HashCodeBuilder(17, 37)
+                .append(id)
+                .append(name)
+                .append(shortName)
+                .append(flag)
+                .toHashCode();
     }
 
     @Override
     public String toString() {
-        return "Country{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", shortName='" + shortName + '\'' +
-                '}';
+        return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
+                .append("id", id)
+                .append("name", name)
+                .append("shortName", shortName)
+                .toString();
     }
 }

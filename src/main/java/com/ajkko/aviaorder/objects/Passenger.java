@@ -1,6 +1,10 @@
 package com.ajkko.aviaorder.objects;
 
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+
 public class Passenger {
     private long id;
     private String firstName;
@@ -61,39 +65,38 @@ public class Passenger {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-
         Passenger passenger = (Passenger) o;
-
-        if (id != passenger.id) return false;
-        if (firstName != null ? !firstName.equals(passenger.firstName) : passenger.firstName != null) return false;
-        if (lastName != null ? !lastName.equals(passenger.lastName) : passenger.lastName != null) return false;
-        if (documentNumber != null ? !documentNumber.equals(passenger.documentNumber) : passenger.documentNumber != null)
-            return false;
-        if (email != null ? !email.equals(passenger.email) : passenger.email != null) return false;
-        return !(phone != null ? !phone.equals(passenger.phone) : passenger.phone != null);
-
+        return new EqualsBuilder()
+                .append(id, passenger.id)
+                .append(firstName, passenger.firstName)
+                .append(lastName, passenger.lastName)
+                .append(documentNumber, passenger.documentNumber)
+                .append(email, passenger.email)
+                .append(phone, passenger.phone)
+                .isEquals();
     }
 
     @Override
     public int hashCode() {
-        int result = (int) (id ^ (id >>> 32));
-        result = 31 * result + (firstName != null ? firstName.hashCode() : 0);
-        result = 31 * result + (lastName != null ? lastName.hashCode() : 0);
-        result = 31 * result + (documentNumber != null ? documentNumber.hashCode() : 0);
-        result = 31 * result + (email != null ? email.hashCode() : 0);
-        result = 31 * result + (phone != null ? phone.hashCode() : 0);
-        return result;
+        return new HashCodeBuilder(17, 37)
+                .append(id)
+                .append(firstName)
+                .append(lastName)
+                .append(documentNumber)
+                .append(email)
+                .append(phone)
+                .toHashCode();
     }
 
     @Override
     public String toString() {
-        return "Passenger{" +
-                "id=" + id +
-                ", firstName='" + firstName + '\'' +
-                ", lastName='" + lastName + '\'' +
-                ", documentNumber='" + documentNumber + '\'' +
-                ", email='" + email + '\'' +
-                ", phone='" + phone + '\'' +
-                '}';
+        return new ToStringBuilder(this)
+                .append("id", id)
+                .append("firstName", firstName)
+                .append("lastName", lastName)
+                .append("documentNumber", documentNumber)
+                .append("email", email)
+                .append("phone", phone)
+                .toString();
     }
 }

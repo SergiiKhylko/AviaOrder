@@ -1,7 +1,9 @@
 package com.ajkko.aviaorder.objects;
 
-import com.ajkko.aviaorder.objects.Aircraft;
-import com.ajkko.aviaorder.objects.City;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 
 import java.time.Duration;
 import java.time.ZonedDateTime;
@@ -79,41 +81,41 @@ public class Flight {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-
         Flight flight = (Flight) o;
-
-        if (id != flight.id) return false;
-        if (code != null ? !code.equals(flight.code) : flight.code != null) return false;
-        if (dateDepart != null ? !dateDepart.equals(flight.dateDepart) : flight.dateDepart != null) return false;
-        if (dateCome != null ? !dateCome.equals(flight.dateCome) : flight.dateCome != null) return false;
-        if (aircraft != null ? !aircraft.equals(flight.aircraft) : flight.aircraft != null) return false;
-        if (cityFrom != null ? !cityFrom.equals(flight.cityFrom) : flight.cityFrom != null) return false;
-        return !(cityTo != null ? !cityTo.equals(flight.cityTo) : flight.cityTo != null);
-
+        return new EqualsBuilder()
+                .append(id, flight.id)
+                .append(code, flight.code)
+                .append(dateDepart, flight.dateDepart)
+                .append(dateCome, flight.dateCome)
+                .append(aircraft, flight.aircraft)
+                .append(cityFrom, flight.cityFrom)
+                .append(cityTo, flight.cityTo)
+                .isEquals();
     }
 
     @Override
     public int hashCode() {
-        int result = (int) (id ^ (id >>> 32));
-        result = 31 * result + (code != null ? code.hashCode() : 0);
-        result = 31 * result + (dateDepart != null ? dateDepart.hashCode() : 0);
-        result = 31 * result + (dateCome != null ? dateCome.hashCode() : 0);
-        result = 31 * result + (aircraft != null ? aircraft.hashCode() : 0);
-        result = 31 * result + (cityFrom != null ? cityFrom.hashCode() : 0);
-        result = 31 * result + (cityTo != null ? cityTo.hashCode() : 0);
-        return result;
+        return new HashCodeBuilder(17, 37)
+                .append(id)
+                .append(code)
+                .append(dateDepart)
+                .append(dateCome)
+                .append(aircraft)
+                .append(cityFrom)
+                .append(cityTo)
+                .toHashCode();
     }
 
     @Override
     public String toString() {
-        return "Flight{" +
-                "id=" + id +
-                ", code='" + code + '\'' +
-                ", dateDepart=" + dateDepart +
-                ", dateCome=" + dateCome +
-                ", aircraft=" + aircraft +
-                ", cityFrom=" + cityFrom +
-                ", cityTo=" + cityTo +
-                '}';
+        return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
+                .append("id", id)
+                .append("code", code)
+                .append("dateDepart", dateDepart)
+                .append("dateCome", dateCome)
+                .append("aircraft", aircraft)
+                .append("cityFrom", cityFrom)
+                .append("cityTo", cityTo)
+                .toString();
     }
 }
