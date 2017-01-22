@@ -18,7 +18,7 @@
             <AppenderRef ref="Console"/>
             <AppenderRef ref="RollingFile"/>
         </Root>
-        <logger name="com.ajkko.aviaorder" level="trace" additivity="false">
+        <logger name="com.ajkko.aviaorder" level="info" additivity="false">
             <AppenderRef ref="RollingFile"/>
             <AppenderRef ref="Console"/>
         </logger>
