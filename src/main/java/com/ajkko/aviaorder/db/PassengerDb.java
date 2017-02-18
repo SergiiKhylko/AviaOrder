@@ -21,8 +21,8 @@ public class PassengerDb {
     private static PassengerDb instance;
     private static final Logger LOG = LogManager.getLogger(PassengerDb.class);
 
-    private static final String SQL_GET_PASSENGER = "select * from FlightDB.passenger where id = ?";
     private static final String SQL_GET_PASSENGERS = "select * from FlightDB.passenger";
+    private static final String SQL_GET_PASSENGER = SQL_GET_PASSENGERS + " where id = ?";
 
     private static final String COLUMN_ID = "id";
     private static final String COLUMN_FIRST_NAME = "first_name";

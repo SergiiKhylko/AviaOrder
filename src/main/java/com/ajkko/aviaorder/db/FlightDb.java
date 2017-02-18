@@ -26,7 +26,7 @@ public class FlightDb {
     private static FlightDb instance;
     private static final Logger LOG = LogManager.getLogger(FlightDb.class);
     private static final String SQL_GET_FLIGHTS = "select * from flight";
-    private static final String SQL_GET_FLIGHT = "select * from flight where id = ?";
+    private static final String SQL_GET_FLIGHT = SQL_GET_FLIGHTS + " where id = ?";
     private static final String SQL_INSERT_FLIGHT = "insert into flight " + "(code, " +
                                                                             "date_depart, " +
                                                                             "date_come, " +

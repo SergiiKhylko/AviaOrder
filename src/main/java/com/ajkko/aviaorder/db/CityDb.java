@@ -21,7 +21,7 @@ public class CityDb {
     private static CityDb instance;
     private static final Logger LOG = LogManager.getLogger(CityDb.class);
     private static final String SQL_GET_CITIES = "select * from FlightDB.city";
-    private static final String SQL_GET_CITY = "select * from FlightDB.city where id = ?";
+    private static final String SQL_GET_CITY = SQL_GET_CITIES + " where id = ?";
     private static final String COLUMN_ID = "id";
     private static final String COLUMN_NAME = "name";
     private static final String COLUMN_DESC = "desc";
