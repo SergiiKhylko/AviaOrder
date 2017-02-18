@@ -10,7 +10,6 @@ public class Country {
     private long id;
     private String name;
     private String shortName;
-    private byte[] flag;
 
     public long getId() {
         return id;
@@ -36,14 +35,6 @@ public class Country {
         this.shortName = shortName;
     }
 
-    public byte[] getFlag() {
-        return flag;
-    }
-
-    public void setFlag(byte[] flag) {
-        this.flag = flag;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -53,7 +44,6 @@ public class Country {
                 .append(id, country.id)
                 .append(name, country.name)
                 .append(shortName, country.shortName)
-                .append(flag, country.flag)
                 .isEquals();
     }
 
@@ -63,7 +53,6 @@ public class Country {
                 .append(id)
                 .append(name)
                 .append(shortName)
-                .append(flag)
                 .toHashCode();
     }
 

@@ -13,7 +13,7 @@ public class Flight {
     private String code;
     private ZonedDateTime dateDepart;
     private ZonedDateTime dateCome;
-    private Aircraft aircraft;
+    private Company company;
     private City cityFrom;
     private City cityTo;
 
@@ -37,12 +37,12 @@ public class Flight {
         this.code = code;
     }
 
-    public Aircraft getAircraft() {
-        return aircraft;
+    public Company getCompany() {
+        return company;
     }
 
-    public void setAircraft(Aircraft aircraft) {
-        this.aircraft = aircraft;
+    public void setCompany(Company company) {
+        this.company = company;
     }
 
     public City getCityFrom() {
@@ -87,7 +87,7 @@ public class Flight {
                 .append(code, flight.code)
                 .append(dateDepart, flight.dateDepart)
                 .append(dateCome, flight.dateCome)
-                .append(aircraft, flight.aircraft)
+                .append(company, flight.company)
                 .append(cityFrom, flight.cityFrom)
                 .append(cityTo, flight.cityTo)
                 .isEquals();
@@ -100,7 +100,7 @@ public class Flight {
                 .append(code)
                 .append(dateDepart)
                 .append(dateCome)
-                .append(aircraft)
+                .append(company)
                 .append(cityFrom)
                 .append(cityTo)
                 .toHashCode();
@@ -113,7 +113,7 @@ public class Flight {
                 .append("code", code)
                 .append("dateDepart", dateDepart)
                 .append("dateCome", dateCome)
-                .append("aircraft", aircraft)
+                .append("company", company)
                 .append("cityFrom", cityFrom)
                 .append("cityTo", cityTo)
                 .toString();

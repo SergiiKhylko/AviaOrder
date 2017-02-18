@@ -12,7 +12,6 @@ public class City {
     private String name;
     private String desc;
     private Country country;
-    private String code;
     private ZoneId timeZone;
 
     public long getId() {
@@ -47,14 +46,6 @@ public class City {
         this.country = country;
     }
 
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
-    }
-
     public ZoneId getTimeZone() {
         return timeZone;
     }
@@ -73,7 +64,6 @@ public class City {
                 .append(name, city.name)
                 .append(desc, city.desc)
                 .append(country, city.country)
-                .append(code, city.code)
                 .append(timeZone, city.timeZone)
                 .isEquals();
     }
@@ -85,7 +75,6 @@ public class City {
                 .append(name)
                 .append(desc)
                 .append(country)
-                .append(code)
                 .append(timeZone)
                 .toHashCode();
     }
@@ -97,7 +86,6 @@ public class City {
                 .append("name", name)
                 .append("desc", desc)
                 .append("country", country)
-                .append("code", code)
                 .append("timeZone", timeZone)
                 .toString();
     }

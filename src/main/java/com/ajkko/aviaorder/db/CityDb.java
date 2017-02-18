@@ -24,7 +24,6 @@ public class CityDb {
     private static final String SQL_GET_CITY = "select * from FlightDB.city where id = ?";
     private static final String COLUMN_ID = "id";
     private static final String COLUMN_NAME = "name";
-    private static final String COLUMN_CODE = "code";
     private static final String COLUMN_DESC = "desc";
     private static final String COLUMN_COUNTRY_ID = "country_id";
     private static final String COLUMN_TIME_ZONE = "time_zone";
@@ -96,7 +95,6 @@ public class CityDb {
         City city = new City();
         city.setId(resultSet.getLong(COLUMN_ID));
         city.setName(resultSet.getString(COLUMN_NAME));
-        city.setCode(resultSet.getString(COLUMN_CODE));
         city.setDesc(resultSet.getString(COLUMN_DESC));
         city.setTimeZone(ZoneId.of(resultSet.getString(COLUMN_TIME_ZONE)));
         city.setCountry(CountryDb.getInstance().

@@ -1,13 +1,15 @@
 package com.ajkko.aviaorder.db;
 
+import com.ajkko.aviaorder.objects.City;
+import com.ajkko.aviaorder.objects.Company;
 import com.ajkko.aviaorder.objects.Flight;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.Statement;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -17,6 +19,7 @@ import java.util.Collection;
 import static com.ajkko.aviaorder.utils.DbUtils.closeResultSet;
 import static com.ajkko.aviaorder.utils.DbUtils.closeStatement;
 import static com.ajkko.aviaorder.utils.DbUtils.getByIdStatement;
+import static com.ajkko.aviaorder.utils.DbUtils.getPrepareStatement;
 
 public class FlightDb {
 
@@ -24,11 +27,19 @@ public class FlightDb {
     private static final Logger LOG = LogManager.getLogger(FlightDb.class);
     private static final String SQL_GET_FLIGHTS = "select * from flight";
     private static final String SQL_GET_FLIGHT = "select * from flight where id = ?";
+    private static final String SQL_INSERT_FLIGHT = "insert into flight " + "(code, " +
+                                                                            "date_depart, " +
+                                                                            "date_come, " +
+                                                                            "company_id, " +
+                                                                            "city_from_id, " +
+                                                                            "city_to_id) " +
+                                                                "values (?, ?, ?, ?, ?, ?);";
+
     private static final String COLUMN_ID = "id";
     private static final String COLUMN_CODE = "code";
     private static final String COLUMN_DEPART = "date_depart";
     private static final String COLUMN_DATE_COME = "date_come";
-    private static final String COLUMN_AIRCRAFT_ID = "aircraft_id";
+    private static final String COLUMN_COMPANY_ID = "company_id";
     private static final String COLUMN_CITY_FROM_ID = "city_from_id";
     private static final String COLUMN_CITY_TO_ID = "city_to_id";
 
@@ -78,8 +89,8 @@ public class FlightDb {
                 flight.getCityFrom().getTimeZone()));
         flight.setDateCome(getDateTime(resultSet.getLong(COLUMN_DATE_COME),
                 flight.getCityTo().getTimeZone()));
-        flight.setAircraft(AircraftDb.getInstance().
-                get(resultSet.getLong(COLUMN_AIRCRAFT_ID)));
+        flight.setCompany(CompanyDb.getInstance().
+                get(resultSet.getLong(COLUMN_COMPANY_ID)));
         return flight;
     }
 
@@ -113,6 +124,38 @@ public class FlightDb {
             closeResultSet(resultSet);
             closeStatement(statement);
         }
+    }
+
+    public void addFlight(Flight flight) {
+        try {
+            insert(flight);
+        } catch (SQLException e) {
+            LOG.error(e.getMessage(), e);
+        }
+    }
+
+
+    private void insert(Flight flight) throws SQLException {
+        PreparedStatement statement = getPrepareStatement(SQL_INSERT_FLIGHT);
+        statement.setString(1, flight.getCode());
+        statement.setLong(2, toMilliSec(flight.getDateDepart()));
+        statement.setLong(3, toMilliSec(flight.getDateCome()));
+        statement.setLong(4, getCompanyId(flight.getCompany()));
+        statement.setLong(5, getCityId(flight.getCityFrom()));
+        statement.setLong(6, getCityId(flight.getCityTo()));
+        statement.execute();
+    }
+
+    private long toMilliSec(ZonedDateTime time) {
+        return time == null ? 0 : time.toInstant().toEpochMilli();
+    }
+
+    private long getCompanyId(Company company) {
+        return company == null ? 0 : company.getId();
+    }
+
+    private long getCityId(City city) {
+        return city == null ? 0 : city.getId();
     }
 
 }

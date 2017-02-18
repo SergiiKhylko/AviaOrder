@@ -24,7 +24,6 @@ public class CountryDb {
     private static final String COLUMN_ID = "id";
     private static final String COLUMN_NAME = "name";
     private static final String COLUMN_SHORT_NAME = "short_name";
-    private static final String COLUMN_FLAG = "flag";
 
     private CountryDb(){
     }
@@ -94,7 +93,6 @@ public class CountryDb {
         country.setId(resultSet.getLong(COLUMN_ID));
         country.setName(resultSet.getString(COLUMN_NAME));
         country.setShortName(resultSet.getString(COLUMN_SHORT_NAME));
-        country.setFlag(resultSet.getBytes(COLUMN_FLAG));
         return country;
     }
 }

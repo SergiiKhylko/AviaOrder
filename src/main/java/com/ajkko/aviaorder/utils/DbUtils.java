@@ -27,4 +27,9 @@ public class DbUtils {
         statement.setLong(1, id);
         return statement;
     }
+
+    public static PreparedStatement getPrepareStatement(String query) throws SQLException {
+        Connection connection = MainDb.getInstance().getConnection();
+        return connection.prepareStatement(query);
+    }
 }
