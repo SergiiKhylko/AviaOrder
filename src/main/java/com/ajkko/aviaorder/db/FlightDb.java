@@ -9,7 +9,6 @@ import org.apache.logging.log4j.Logger;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -23,17 +22,7 @@ import static com.ajkko.aviaorder.utils.DbUtils.getPrepareStatement;
 
 public class FlightDb {
 
-    private static FlightDb instance;
     private static final Logger LOG = LogManager.getLogger(FlightDb.class);
-    private static final String SQL_GET_FLIGHTS = "select * from flight";
-    private static final String SQL_GET_FLIGHT = SQL_GET_FLIGHTS + " where id = ?";
-    private static final String SQL_INSERT_FLIGHT = "insert into flight " + "(code, " +
-                                                                            "date_depart, " +
-                                                                            "date_come, " +
-                                                                            "company_id, " +
-                                                                            "city_from_id, " +
-                                                                            "city_to_id) " +
-                                                                "values (?, ?, ?, ?, ?, ?);";
 
     private static final String COLUMN_ID = "id";
     private static final String COLUMN_CODE = "code";
@@ -42,6 +31,23 @@ public class FlightDb {
     private static final String COLUMN_COMPANY_ID = "company_id";
     private static final String COLUMN_CITY_FROM_ID = "city_from_id";
     private static final String COLUMN_CITY_TO_ID = "city_to_id";
+
+    private static final String SQL_GET_FLIGHTS = "select * from flight";
+    private static final String SQL_GET_FLIGHT = SQL_GET_FLIGHTS + " where " + COLUMN_ID + " = ?";
+    private static final String SQL_GET_FLIGHT_BY_CITY_AND_DATE = SQL_GET_FLIGHTS +
+            " where " + COLUMN_CITY_FROM_ID + " = ?" +
+            " and " + COLUMN_DEPART + " >= ?" +
+            " and " + COLUMN_DEPART + " < ?";
+
+    private static FlightDb instance;
+
+    private static final String SQL_INSERT_FLIGHT = "insert into flight " + "(code, " +
+                                                                            "date_depart, " +
+                                                                            "date_come, " +
+                                                                            "company_id, " +
+                                                                            "city_from_id, " +
+                                                                            "city_to_id) " +
+                                                                "values (?, ?, ?, ?, ?, ?);";
 
     private FlightDb() {
     }
@@ -55,7 +61,7 @@ public class FlightDb {
 
     public Collection<Flight> getFlights(){
         try {
-            return getFlights(MainDb.getInstance().getStatement());
+            return getFlights(getPrepareStatement(SQL_GET_FLIGHTS));
         } catch (SQLException e) {
             LOG.error(e.getMessage(), e);
         } finally {
@@ -64,10 +70,26 @@ public class FlightDb {
         return new ArrayList<>();
     }
 
-    private Collection<Flight> getFlights(Statement statement) throws SQLException {
-        ResultSet resultSet = statement.executeQuery(SQL_GET_FLIGHTS);
+    public Collection<Flight> getFlights(long cityId, long timeStampFrom, long timeStampTo){
+        try {
+            PreparedStatement statement = getPrepareStatement(SQL_GET_FLIGHT_BY_CITY_AND_DATE);
+            statement.setLong(1, cityId);
+            statement.setLong(2, timeStampFrom);
+            statement.setLong(3, timeStampTo);
+            return getFlights(statement);
+        } catch (SQLException e) {
+            LOG.error(e.getMessage(), e);
+        } finally {
+            MainDb.getInstance().closeConnection();
+        }
+        return new ArrayList<>();
+    }
+
+    private Collection<Flight> getFlights(PreparedStatement statement) throws SQLException {
+        ResultSet resultSet = null;
         Collection<Flight> flights = new ArrayList<>();
         try {
+            resultSet = statement.executeQuery();
             while (resultSet.next()) {
                 flights.add(getMappedFlight(resultSet));
             }
