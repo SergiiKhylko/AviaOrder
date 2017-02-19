@@ -7,26 +7,31 @@ import org.apache.logging.log4j.Logger;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import static com.ajkko.aviaorder.utils.DbUtils.closeResultSet;
-import static com.ajkko.aviaorder.utils.DbUtils.closeStatement;
 import static com.ajkko.aviaorder.utils.DbUtils.getByIdStatement;
+import static com.ajkko.aviaorder.utils.DbUtils.getPrepareStatement;
 
-public class CityDb {
+public class CityDb extends AbstractDb<City>{
 
-    private static CityDb instance;
     private static final Logger LOG = LogManager.getLogger(CityDb.class);
-    private static final String SQL_GET_CITIES = "select * from FlightDB.city";
-    private static final String SQL_GET_CITY = SQL_GET_CITIES + " where id = ?";
+
+
+    private static final String TABLE_NAME = "city";
     private static final String COLUMN_ID = "id";
     private static final String COLUMN_NAME = "name";
     private static final String COLUMN_DESC = "desc";
     private static final String COLUMN_COUNTRY_ID = "country_id";
     private static final String COLUMN_TIME_ZONE = "time_zone";
+
+    private static final String SQL_GET_CITIES = "select * from " + TABLE_NAME;
+    private static final String SQL_GET_CITY = SQL_GET_CITIES + " where id = ?";
+
+    private static final String SQL_INSERT_CITY = "";
+
+    private static CityDb instance;
 
     private CityDb(){
     }
@@ -40,7 +45,7 @@ public class CityDb {
 
     public Collection<City> getCities(){
         try {
-            return getCities(MainDb.getInstance().getStatement());
+            return getCollection(getPrepareStatement(SQL_GET_CITIES));
         } catch (SQLException e) {
             LOG.error(e.getMessage(), e);
         } finally {
@@ -49,24 +54,9 @@ public class CityDb {
         return new ArrayList<>();
     }
 
-    private Collection<City> getCities(Statement statement) throws SQLException {
-        ResultSet resultSet = null;
-        Collection<City> cities = new ArrayList<>();
-        try {
-            resultSet = statement.executeQuery(SQL_GET_CITIES);
-            while (resultSet.next()) {
-                cities.add(getMappedCity(resultSet));
-            }
-        } finally {
-            closeResultSet(resultSet);
-            closeStatement(statement);
-        }
-        return cities;
-    }
-
     public City getCity(long id){
         try {
-            return get(id);
+            return getById(id);
         } catch (SQLException e) {
             LOG.error(e.getMessage(), e);
         } finally {
@@ -75,23 +65,13 @@ public class CityDb {
         return null;
     }
 
-    protected City get(long id) throws SQLException {
-        return getCity(getByIdStatement(SQL_GET_CITY, id));
+    @Override
+    protected City getById(long id) throws SQLException {
+        return getObject(getByIdStatement(SQL_GET_CITY, id));
     }
 
-    private City getCity(PreparedStatement statement) throws SQLException {
-        ResultSet resultSet = null;
-        try {
-            resultSet = statement.executeQuery();
-            resultSet.next();
-            return getMappedCity(resultSet);
-        } finally {
-            closeResultSet(resultSet);
-            closeStatement(statement);
-        }
-    }
-
-    private City getMappedCity(ResultSet resultSet) throws SQLException {
+    @Override
+    protected City mapFromResultSet(ResultSet resultSet) throws SQLException {
         City city = new City();
         city.setId(resultSet.getLong(COLUMN_ID));
         city.setName(resultSet.getString(COLUMN_NAME));
@@ -100,5 +80,24 @@ public class CityDb {
         city.setCountry(CountryDb.getInstance().
                 get(resultSet.getLong(COLUMN_COUNTRY_ID)));
         return city;
+    }
+
+    public void addCity(City city) {
+        try {
+            executeInsert(city, SQL_INSERT_CITY);
+        } catch (SQLException e) {
+            LOG.error(e.getMessage(), e);
+        }
+    }
+
+    @Override
+    protected void prepareUpdateStatement(PreparedStatement statement, City city) throws SQLException {
+        //TODO
+        statement.setString(1, city.getName());
+    }
+
+    @Override
+    protected void logError(Exception e) {
+        LOG.error(e.getMessage(), e);
     }
 }

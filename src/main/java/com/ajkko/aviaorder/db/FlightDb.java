@@ -12,11 +12,9 @@ import java.sql.SQLException;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
 import java.util.Collection;
 
 import static com.ajkko.aviaorder.utils.DbUtils.getByIdStatement;
-import static com.ajkko.aviaorder.utils.DbUtils.getPrepareStatement;
 
 public class FlightDb extends AbstractDb<Flight>{
 
@@ -59,29 +57,20 @@ public class FlightDb extends AbstractDb<Flight>{
     }
 
     public Collection<Flight> getFlights(){
-        try {
-            return getCollection(getPrepareStatement(SQL_GET_FLIGHTS));
-        } catch (SQLException e) {
-            LOG.error(e.getMessage(), e);
-        } finally {
-            MainDb.getInstance().closeConnection();
-        }
-        return new ArrayList<>();
+        return getCollection(SQL_GET_FLIGHTS);
     }
 
     public Collection<Flight> getFlights(long cityId, long timeStampFrom, long timeStampTo){
-        try {
-            PreparedStatement statement = getPrepareStatement(SQL_GET_FLIGHT_BY_CITY_AND_DATE);
-            statement.setLong(1, cityId);
-            statement.setLong(2, timeStampFrom);
-            statement.setLong(3, timeStampTo);
-            return getCollection(statement);
-        } catch (SQLException e) {
-            LOG.error(e.getMessage(), e);
-        } finally {
-            MainDb.getInstance().closeConnection();
-        }
-        return new ArrayList<>();
+        return getCollection(SQL_GET_FLIGHT_BY_CITY_AND_DATE, statement ->
+                prepareStatementByCityAndDate(statement, cityId, timeStampFrom, timeStampTo));
+    }
+
+    private void prepareStatementByCityAndDate(PreparedStatement statement,
+                                               long cityId, long timeStampFrom,
+                                               long timeStampTo) throws SQLException {
+        statement.setLong(1, cityId);
+        statement.setLong(2, timeStampFrom);
+        statement.setLong(3, timeStampTo);
     }
 
     @Override
@@ -89,8 +78,8 @@ public class FlightDb extends AbstractDb<Flight>{
         Flight flight = new Flight();
         flight.setId(resultSet.getLong(COLUMN_ID));
         flight.setCityFrom(CityDb.getInstance().
-                get(resultSet.getLong(COLUMN_CITY_FROM_ID)));
-        flight.setCityTo(CityDb.getInstance().get(resultSet.getLong(COLUMN_CITY_TO_ID)));
+                getById(resultSet.getLong(COLUMN_CITY_FROM_ID)));
+        flight.setCityTo(CityDb.getInstance().getById(resultSet.getLong(COLUMN_CITY_TO_ID)));
         flight.setDateDepart(getDateTime(resultSet.getLong(COLUMN_DEPART),
                 flight.getCityFrom().getTimeZone()));
         flight.setDateCome(getDateTime(resultSet.getLong(COLUMN_DATE_COME),
@@ -106,21 +95,15 @@ public class FlightDb extends AbstractDb<Flight>{
     }
 
     public Flight getFlight(long id){
-        try {
-            return get(id);
-        } catch (SQLException e) {
-            LOG.error(e.getMessage(), e);
-        } finally {
-            MainDb.getInstance().closeConnection();
-        }
-        return null;
+        return getByIdAndCloseConnection(id);
     }
 
-    protected Flight get(long id) throws SQLException {
+    @Override
+    protected Flight getById(long id) throws SQLException {
         return getObject(getByIdStatement(SQL_GET_FLIGHT, id));
     }
 
-    public void addFlight(Flight flight) {
+    public void addFlight(Flight flight) { //TODO close connection, statement
         try {
             executeInsert(flight, SQL_INSERT_FLIGHT);
         } catch (SQLException e) {
@@ -129,7 +112,7 @@ public class FlightDb extends AbstractDb<Flight>{
     }
 
     @Override
-    protected void prepareStatement(PreparedStatement statement, Flight flight) throws SQLException {
+    protected void prepareUpdateStatement(PreparedStatement statement, Flight flight) throws SQLException {
         statement.setLong(1, toMilliSec(flight.getDateDepart()));
         statement.setLong(2, toMilliSec(flight.getDateCome()));
         statement.setLong(3, getCompanyId(flight.getCompany()));
@@ -147,6 +130,11 @@ public class FlightDb extends AbstractDb<Flight>{
 
     private long getCityId(City city) {
         return city == null ? 0 : city.getId();
+    }
+
+    @Override
+    protected void logError(Exception e) {
+        LOG.error(e.getMessage(), e);
     }
 
 }
