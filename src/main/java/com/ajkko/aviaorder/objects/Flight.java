@@ -10,7 +10,6 @@ import java.time.ZonedDateTime;
 
 public class Flight {
     private long id;
-    private String code;
     private ZonedDateTime dateDepart;
     private ZonedDateTime dateCome;
     private Company company;
@@ -27,14 +26,6 @@ public class Flight {
 
     public void setId(long id) {
         this.id = id;
-    }
-
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
     }
 
     public Company getCompany() {
@@ -84,7 +75,6 @@ public class Flight {
         Flight flight = (Flight) o;
         return new EqualsBuilder()
                 .append(id, flight.id)
-                .append(code, flight.code)
                 .append(dateDepart, flight.dateDepart)
                 .append(dateCome, flight.dateCome)
                 .append(company, flight.company)
@@ -97,7 +87,6 @@ public class Flight {
     public int hashCode() {
         return new HashCodeBuilder(17, 37)
                 .append(id)
-                .append(code)
                 .append(dateDepart)
                 .append(dateCome)
                 .append(company)
@@ -110,7 +99,6 @@ public class Flight {
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
                 .append("id", id)
-                .append("code", code)
                 .append("dateDepart", dateDepart)
                 .append("dateCome", dateCome)
                 .append("company", company)

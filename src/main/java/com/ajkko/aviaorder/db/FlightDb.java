@@ -15,24 +15,23 @@ import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import static com.ajkko.aviaorder.utils.DbUtils.closeResultSet;
-import static com.ajkko.aviaorder.utils.DbUtils.closeStatement;
 import static com.ajkko.aviaorder.utils.DbUtils.getByIdStatement;
 import static com.ajkko.aviaorder.utils.DbUtils.getPrepareStatement;
 
-public class FlightDb {
+public class FlightDb extends AbstractDb<Flight>{
 
     private static final Logger LOG = LogManager.getLogger(FlightDb.class);
 
+    private static final String TABLE_NAME = "flight";
+
     private static final String COLUMN_ID = "id";
-    private static final String COLUMN_CODE = "code";
     private static final String COLUMN_DEPART = "date_depart";
     private static final String COLUMN_DATE_COME = "date_come";
     private static final String COLUMN_COMPANY_ID = "company_id";
     private static final String COLUMN_CITY_FROM_ID = "city_from_id";
     private static final String COLUMN_CITY_TO_ID = "city_to_id";
 
-    private static final String SQL_GET_FLIGHTS = "select * from flight";
+    private static final String SQL_GET_FLIGHTS = "select * from " + TABLE_NAME;
     private static final String SQL_GET_FLIGHT = SQL_GET_FLIGHTS + " where " + COLUMN_ID + " = ?";
     private static final String SQL_GET_FLIGHT_BY_CITY_AND_DATE = SQL_GET_FLIGHTS +
             " where " + COLUMN_CITY_FROM_ID + " = ?" +
@@ -41,13 +40,13 @@ public class FlightDb {
 
     private static FlightDb instance;
 
-    private static final String SQL_INSERT_FLIGHT = "insert into flight " + "(code, " +
-                                                                            "date_depart, " +
-                                                                            "date_come, " +
-                                                                            "company_id, " +
-                                                                            "city_from_id, " +
-                                                                            "city_to_id) " +
-                                                                "values (?, ?, ?, ?, ?, ?);";
+    private static final String SQL_INSERT_FLIGHT = "insert into " + TABLE_NAME +
+            "(" + COLUMN_DEPART + ", " +
+            COLUMN_DATE_COME + ", " +
+            COLUMN_COMPANY_ID + ", " +
+            COLUMN_CITY_FROM_ID + ", " +
+            COLUMN_CITY_TO_ID + ") " +
+            "values (?, ?, ?, ?, ?, ?);";
 
     private FlightDb() {
     }
@@ -61,7 +60,7 @@ public class FlightDb {
 
     public Collection<Flight> getFlights(){
         try {
-            return getFlights(getPrepareStatement(SQL_GET_FLIGHTS));
+            return getCollection(getPrepareStatement(SQL_GET_FLIGHTS));
         } catch (SQLException e) {
             LOG.error(e.getMessage(), e);
         } finally {
@@ -76,7 +75,7 @@ public class FlightDb {
             statement.setLong(1, cityId);
             statement.setLong(2, timeStampFrom);
             statement.setLong(3, timeStampTo);
-            return getFlights(statement);
+            return getCollection(statement);
         } catch (SQLException e) {
             LOG.error(e.getMessage(), e);
         } finally {
@@ -85,25 +84,10 @@ public class FlightDb {
         return new ArrayList<>();
     }
 
-    private Collection<Flight> getFlights(PreparedStatement statement) throws SQLException {
-        ResultSet resultSet = null;
-        Collection<Flight> flights = new ArrayList<>();
-        try {
-            resultSet = statement.executeQuery();
-            while (resultSet.next()) {
-                flights.add(getMappedFlight(resultSet));
-            }
-        } finally {
-            closeStatement(statement);
-            closeResultSet(resultSet);
-        }
-        return flights;
-    }
-
-    private Flight getMappedFlight(ResultSet resultSet) throws SQLException {
+    @Override
+    protected Flight mapFromResultSet(ResultSet resultSet) throws SQLException {
         Flight flight = new Flight();
         flight.setId(resultSet.getLong(COLUMN_ID));
-        flight.setCode(resultSet.getString(COLUMN_CODE));
         flight.setCityFrom(CityDb.getInstance().
                 get(resultSet.getLong(COLUMN_CITY_FROM_ID)));
         flight.setCityTo(CityDb.getInstance().get(resultSet.getLong(COLUMN_CITY_TO_ID)));
@@ -133,39 +117,24 @@ public class FlightDb {
     }
 
     protected Flight get(long id) throws SQLException {
-        return getFlight(getByIdStatement(SQL_GET_FLIGHT, id));
-    }
-
-    private Flight getFlight(PreparedStatement statement) throws SQLException {
-        ResultSet resultSet = null;
-        try {
-            resultSet = statement.executeQuery();
-            resultSet.next();
-            return getMappedFlight(resultSet);
-        } finally {
-            closeResultSet(resultSet);
-            closeStatement(statement);
-        }
+        return getObject(getByIdStatement(SQL_GET_FLIGHT, id));
     }
 
     public void addFlight(Flight flight) {
         try {
-            insert(flight);
+            executeInsert(flight, SQL_INSERT_FLIGHT);
         } catch (SQLException e) {
             LOG.error(e.getMessage(), e);
         }
     }
 
-
-    private void insert(Flight flight) throws SQLException {
-        PreparedStatement statement = getPrepareStatement(SQL_INSERT_FLIGHT);
-        statement.setString(1, flight.getCode());
-        statement.setLong(2, toMilliSec(flight.getDateDepart()));
-        statement.setLong(3, toMilliSec(flight.getDateCome()));
-        statement.setLong(4, getCompanyId(flight.getCompany()));
-        statement.setLong(5, getCityId(flight.getCityFrom()));
-        statement.setLong(6, getCityId(flight.getCityTo()));
-        statement.execute();
+    @Override
+    protected void prepareStatement(PreparedStatement statement, Flight flight) throws SQLException {
+        statement.setLong(1, toMilliSec(flight.getDateDepart()));
+        statement.setLong(2, toMilliSec(flight.getDateCome()));
+        statement.setLong(3, getCompanyId(flight.getCompany()));
+        statement.setLong(4, getCityId(flight.getCityFrom()));
+        statement.setLong(5, getCityId(flight.getCityTo()));
     }
 
     private long toMilliSec(ZonedDateTime time) {
