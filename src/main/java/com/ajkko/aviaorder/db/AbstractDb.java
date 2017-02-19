@@ -12,8 +12,6 @@ import static com.ajkko.aviaorder.utils.DbUtils.getPrepareStatement;
 
 public abstract class AbstractDb<T> {
 
-    protected abstract T mapFromResultSet(ResultSet resultSet) throws SQLException;
-
     protected Collection<T> getCollection(PreparedStatement statement) throws SQLException {
         ResultSet resultSet = null;
         Collection<T> objects = new ArrayList<>();
@@ -47,8 +45,6 @@ public abstract class AbstractDb<T> {
         statement.executeUpdate();
     }
 
-    protected abstract void prepareUpdateStatement(PreparedStatement statement, T object) throws SQLException;
-
     public Collection<T> getCollection(String query){
         return getCollection(query, null);
     }
@@ -73,8 +69,6 @@ public abstract class AbstractDb<T> {
         }
     }
 
-    protected abstract void logError(Exception e);
-
     protected T getByIdAndCloseConnection(long id) {
         try {
             return getById(id);
@@ -86,6 +80,12 @@ public abstract class AbstractDb<T> {
         return null;
     }
 
+    protected abstract void prepareUpdateStatement(PreparedStatement statement, T object) throws SQLException;
+
+    protected abstract T mapFromResultSet(ResultSet resultSet) throws SQLException;
+
     protected abstract T getById(long id) throws SQLException;
+
+    protected abstract void logError(Exception e);
 
 }
