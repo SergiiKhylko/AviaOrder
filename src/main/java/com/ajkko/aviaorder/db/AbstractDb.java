@@ -39,10 +39,27 @@ public abstract class AbstractDb<T> {
         }
     }
 
-    protected void executeInsert(T object, String query) throws SQLException { //TODO close connection, statement
-        PreparedStatement statement = getPrepareStatement(query);
-        prepareUpdateStatement(statement, object);
-        statement.executeUpdate();
+    protected void addObjectAndCloseConnection(T object, String query) {
+        try {
+            executeInsert(object, query);
+        } catch (SQLException e) {
+            logError(e);
+        } finally {
+            MainDb.getInstance().closeConnection();
+        }
+    }
+
+    protected void executeInsert(T object, String query) throws SQLException {
+        PreparedStatement statement = null;
+        try {
+            statement = getPrepareStatement(query);
+            prepareUpdateStatement(statement, object);
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            logError(e);
+        } finally {
+            closeStatement(statement);
+        }
     }
 
     public Collection<T> getCollection(String query){

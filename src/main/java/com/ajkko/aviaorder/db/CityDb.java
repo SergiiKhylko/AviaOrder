@@ -8,16 +8,13 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.ZoneId;
-import java.util.ArrayList;
 import java.util.Collection;
 
 import static com.ajkko.aviaorder.utils.DbUtils.getByIdStatement;
-import static com.ajkko.aviaorder.utils.DbUtils.getPrepareStatement;
 
 public class CityDb extends AbstractDb<City>{
 
     private static final Logger LOG = LogManager.getLogger(CityDb.class);
-
 
     private static final String TABLE_NAME = "city";
     private static final String COLUMN_ID = "id";
@@ -29,7 +26,9 @@ public class CityDb extends AbstractDb<City>{
     private static final String SQL_GET_CITIES = "select * from " + TABLE_NAME;
     private static final String SQL_GET_CITY = SQL_GET_CITIES + " where id = ?";
 
-    private static final String SQL_INSERT_CITY = "";
+    private static final String SQL_INSERT_CITY = "insert into " + TABLE_NAME +
+            " ('" + COLUMN_NAME + "', '" + COLUMN_COUNTRY_ID +
+            "', '" + COLUMN_TIME_ZONE + "', '" + COLUMN_DESC + "') values (?, ?, ?, ?)";
 
     private static CityDb instance;
 
@@ -44,25 +43,11 @@ public class CityDb extends AbstractDb<City>{
     }
 
     public Collection<City> getCities(){
-        try {
-            return getCollection(getPrepareStatement(SQL_GET_CITIES));
-        } catch (SQLException e) {
-            LOG.error(e.getMessage(), e);
-        } finally {
-            MainDb.getInstance().closeConnection();
-        }
-        return new ArrayList<>();
+        return getCollection(SQL_GET_CITIES);
     }
 
     public City getCity(long id){
-        try {
-            return getById(id);
-        } catch (SQLException e) {
-            LOG.error(e.getMessage(), e);
-        } finally {
-            MainDb.getInstance().closeConnection();
-        }
-        return null;
+        return getByIdAndCloseConnection(id);
     }
 
     @Override
@@ -78,22 +63,20 @@ public class CityDb extends AbstractDb<City>{
         city.setDesc(resultSet.getString(COLUMN_DESC));
         city.setTimeZone(ZoneId.of(resultSet.getString(COLUMN_TIME_ZONE)));
         city.setCountry(CountryDb.getInstance().
-                get(resultSet.getLong(COLUMN_COUNTRY_ID)));
+                getById(resultSet.getLong(COLUMN_COUNTRY_ID)));
         return city;
     }
 
     public void addCity(City city) {
-        try {
-            executeInsert(city, SQL_INSERT_CITY);
-        } catch (SQLException e) {
-            LOG.error(e.getMessage(), e);
-        }
+        addObjectAndCloseConnection(city, SQL_INSERT_CITY);
     }
 
     @Override
     protected void prepareUpdateStatement(PreparedStatement statement, City city) throws SQLException {
-        //TODO
         statement.setString(1, city.getName());
+        statement.setLong(2, city.getCountry().getId());
+        statement.setString(3, city.getTimeZone().toString());
+        statement.setString(4, city.getDesc());
     }
 
     @Override

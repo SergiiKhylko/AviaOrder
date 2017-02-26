@@ -36,4 +36,9 @@ public class FlightJdbcDao implements FlightDao{
     public Flight getFlight(Long id) {
         return flightDb.getFlight(id);
     }
+
+    @Override
+    public void addFlight(Flight flight) {
+        flightDb.addFlight(flight);
+    }
 }

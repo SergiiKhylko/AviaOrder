@@ -13,4 +13,6 @@ public interface FlightDao {
     Collection<Flight> getFlights(City city, LocalDate date);
 
     Flight getFlight(Long id);
+
+    void addFlight(Flight flight);
 }

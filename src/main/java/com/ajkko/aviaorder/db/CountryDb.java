@@ -1,25 +1,24 @@
 package com.ajkko.aviaorder.db;
 
 import com.ajkko.aviaorder.objects.Country;
-import com.ajkko.aviaorder.utils.DbUtils;
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.ArrayList;
 import java.util.Collection;
 
-import static com.ajkko.aviaorder.utils.DbUtils.closeResultSet;
-import static com.ajkko.aviaorder.utils.DbUtils.closeStatement;
+import static com.ajkko.aviaorder.utils.DbUtils.getByIdStatement;
 
-public class CountryDb {
+public class CountryDb extends AbstractDb<Country> {
 
     private static CountryDb instance;
+
     private static final Logger LOG = LogManager.getLogger(CountryDb.class);
-    private static final String SQL_GET_COUNTRIES = "select * from FlightDB.country";
+
+    private static final String TABLE_NAME = "country";
+    private static final String SQL_GET_COUNTRIES = "select * from " + TABLE_NAME;
     private static final String SQL_GET_COUNTRY_BY_ID = SQL_GET_COUNTRIES + " where id = ?";
     private static final String COLUMN_ID = "id";
     private static final String COLUMN_NAME = "name";
@@ -35,64 +34,35 @@ public class CountryDb {
         return instance;
     }
 
-    public Collection<Country> getCountries(){
-        try {
-            return getCountries(MainDb.getInstance().getStatement());
-        } catch (SQLException e) {
-            LOG.error(e.getMessage(), e);
-        } finally {
-            MainDb.getInstance().closeConnection();
-        }
-        return new ArrayList<>();
+    @Override
+    protected void prepareUpdateStatement(PreparedStatement statement, Country object) throws SQLException {
+        //TODO
     }
 
-    private Collection<Country>getCountries(Statement statement) throws SQLException {
-        ResultSet resultSet = null;
-        Collection<Country> countries = new ArrayList<>();
-        try {
-            resultSet = statement.executeQuery(SQL_GET_COUNTRIES);
-            while (resultSet.next()) {
-                countries.add(getMappedCountry(resultSet));
-            }
-        } finally {
-            closeResultSet(resultSet);
-            closeStatement(statement);
-        }
-        return countries;
-    }
-
-    public Country getCountry(long id) {
-        try {
-            return get(id);
-        } catch (SQLException e) {
-            LOG.error(e.getMessage(), e);
-        } finally {
-            MainDb.getInstance().closeConnection();
-        }
-        return null;
-    }
-
-    protected Country get(long id) throws SQLException {
-        return getCountry(DbUtils.getByIdStatement(SQL_GET_COUNTRY_BY_ID, id));
-    }
-
-    private Country getCountry(PreparedStatement statement) throws SQLException {
-        ResultSet resultSet = null;
-        try {
-            resultSet = statement.executeQuery();
-            resultSet.next();
-            return getMappedCountry(resultSet);
-        } finally {
-            closeResultSet(resultSet);
-            closeStatement(statement);
-        }
-    }
-
-    private Country getMappedCountry(ResultSet resultSet) throws SQLException {
+    @Override
+    protected Country mapFromResultSet(ResultSet resultSet) throws SQLException {
         Country country = new Country();
         country.setId(resultSet.getLong(COLUMN_ID));
         country.setName(resultSet.getString(COLUMN_NAME));
         country.setShortName(resultSet.getString(COLUMN_SHORT_NAME));
         return country;
+    }
+
+    @Override
+    protected Country getById(long id) throws SQLException {
+        return getObject(getByIdStatement(SQL_GET_COUNTRY_BY_ID, id));
+    }
+
+    @Override
+    protected void logError(Exception e) {
+        LOG.error(e.getMessage(), e);
+    }
+
+    public Collection<Country> getCountries(){
+       return getCollection(SQL_GET_COUNTRIES);
+    }
+
+    public Country getCountry(long id) {
+        return getByIdAndCloseConnection(id);
     }
 }

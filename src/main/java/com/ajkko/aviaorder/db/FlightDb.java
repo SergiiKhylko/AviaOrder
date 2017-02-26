@@ -36,8 +36,6 @@ public class FlightDb extends AbstractDb<Flight>{
             " and " + COLUMN_DEPART + " >= ?" +
             " and " + COLUMN_DEPART + " < ?";
 
-    private static FlightDb instance;
-
     private static final String SQL_INSERT_FLIGHT = "insert into " + TABLE_NAME +
             "(" + COLUMN_DEPART + ", " +
             COLUMN_DATE_COME + ", " +
@@ -45,6 +43,8 @@ public class FlightDb extends AbstractDb<Flight>{
             COLUMN_CITY_FROM_ID + ", " +
             COLUMN_CITY_TO_ID + ") " +
             "values (?, ?, ?, ?, ?, ?);";
+
+    private static FlightDb instance;
 
     private FlightDb() {
     }
@@ -85,7 +85,7 @@ public class FlightDb extends AbstractDb<Flight>{
         flight.setDateCome(getDateTime(resultSet.getLong(COLUMN_DATE_COME),
                 flight.getCityTo().getTimeZone()));
         flight.setCompany(CompanyDb.getInstance().
-                get(resultSet.getLong(COLUMN_COMPANY_ID)));
+                getById(resultSet.getLong(COLUMN_COMPANY_ID)));
         return flight;
     }
 
@@ -103,12 +103,8 @@ public class FlightDb extends AbstractDb<Flight>{
         return getObject(getByIdStatement(SQL_GET_FLIGHT, id));
     }
 
-    public void addFlight(Flight flight) { //TODO close connection, statement
-        try {
-            executeInsert(flight, SQL_INSERT_FLIGHT);
-        } catch (SQLException e) {
-            LOG.error(e.getMessage(), e);
-        }
+    public void addFlight(Flight flight) {
+        addObjectAndCloseConnection(flight, SQL_INSERT_FLIGHT);
     }
 
     @Override
@@ -136,5 +132,4 @@ public class FlightDb extends AbstractDb<Flight>{
     protected void logError(Exception e) {
         LOG.error(e.getMessage(), e);
     }
-
 }
